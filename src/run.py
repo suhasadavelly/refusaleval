@@ -59,7 +59,7 @@ def main():
     out_path.parent.mkdir(exist_ok=True)
 
     print(f"Running {len(prompts)} prompts -> {out_path.name}")
-    with open(out_path, "w", encoding="utf-8") as out:
+    with open(out_path, "x", encoding="utf-8") as out:  # "x" = fail if file exists; never overwrite results
         for i, row in enumerate(prompts, 1):
             try:
                 reply, error = ask_model(cfg, row["prompt"]), None
