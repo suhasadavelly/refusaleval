@@ -1,0 +1,24 @@
+# All run settings live here. Change this file, not the code.
+
+server:
+  base_url: "http://localhost:1234/v1"   # LM Studio's local server (Developer tab -> Start Server)
+
+model:
+  # Exact identifier LM Studio shows for the loaded model.
+  name: "olmo-2-1124-7b-instruct"
+  # "chat" for instruct models (uses the model's chat template).
+  # "completion" only if you later test a base model.
+  mode: "chat"
+
+generation:
+  temperature: 0        # 0 = most repeatable runs
+  max_tokens: 300
+  seed: 42
+
+# Only used in completion mode (base models). Ignored in chat mode.
+completion_template: "Question: {prompt}\nAnswer:"
+stop: ["\nQuestion:", "\n\n\n"]
+
+data:
+  prompts_file: "data/prompts.csv"
+  limit: 10             # start small; set to null to run all prompts
