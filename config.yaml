@@ -21,5 +21,5 @@ stop: ["\nQuestion:", "\n\n\n"]
 
 data:
   prompts_file: "data/prompts.csv"
-  limit: 10             # start small; set to null to run all prompts
+  limit: null             # start small; set to null to run all prompts
   sample: null          # e.g. 15 = one prompt per category; overrides limit when set
