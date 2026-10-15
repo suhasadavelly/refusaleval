@@ -27,6 +27,19 @@ def load_prompts(path, limit):
     return rows[:limit] if limit else rows
 
 
+def sample_prompts(rows, n):
+    """Pick n rows round-robin across categories (in CSV order), so every category is covered."""
+    by_cat = {}
+    for row in rows:
+        by_cat.setdefault(row["category"], []).append(row)
+    picked = []
+    while len(picked) < n and any(by_cat.values()):
+        for group in by_cat.values():
+            if group and len(picked) < n:
+                picked.append(group.pop(0))
+    return picked
+
+
 def ask_model(cfg, prompt):
     base = cfg["server"]["base_url"].rstrip("/")
     gen = cfg["generation"]
@@ -52,7 +65,10 @@ def ask_model(cfg, prompt):
 def main():
     cfg_path = ROOT / (sys.argv[1] if len(sys.argv) > 1 else "config.yaml")
     cfg = load_config(cfg_path)
-    prompts = load_prompts(ROOT / cfg["data"]["prompts_file"], cfg["data"].get("limit"))
+    sample = cfg["data"].get("sample")  # if set, overrides limit
+    prompts = load_prompts(ROOT / cfg["data"]["prompts_file"], None if sample else cfg["data"].get("limit"))
+    if sample:
+        prompts = sample_prompts(prompts, sample)
 
     stamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
     out_path = ROOT / "results" / f"{stamp}_{cfg['model']['name']}.jsonl"
